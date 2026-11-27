@@ -1,0 +1,15 @@
+[SddmGreeterTheme]
+Name=Centered
+Description=Minimal centered login screen with blurred wallpaper
+Author=local
+Copyright=local
+License=CC0
+Type=sddm-theme
+Version=1.0
+Website=
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=centered
+Theme-API=2.0
+QtVersion=6

@@ -1,0 +1,26 @@
+#!/bin/sh
+# Xsetup - run as root before the login dialog appears
+# Match the settings used by the Hyprland user session.
+
+LOG=/tmp/sddm-xsetup.log
+: > "$LOG"
+chmod 644 "$LOG"
+
+OUT=$(xrandr --query 2>/dev/null | awk '$2 == "connected" { print $1; exit }')
+echo "connected output: $OUT" >> "$LOG"
+xrandr --query >> "$LOG" 2>&1
+if [ -n "$OUT" ]; then
+    xrandr --output "$OUT" --mode 2560x1440 --rate 180 >> "$LOG" 2>&1 || true
+fi
+echo "--- after ---" >> "$LOG"
+xrandr --query >> "$LOG" 2>&1
+
+setxkbmap -layout us,ru -option grp:alt_shift_toggle,grp:alt_space_toggle >> "$LOG" 2>&1 || true
+
+for id in $(xinput list --id-only 2>/dev/null); do
+    if xinput list-props "$id" 2>/dev/null | grep -q 'libinput Accel Speed'; then
+        xinput set-prop "$id" 'libinput Accel Profile Enabled' 0 1 0 2>/dev/null ||
+            xinput set-prop "$id" 'libinput Accel Profile Enabled' 0 1 2>/dev/null
+        xinput set-prop "$id" 'libinput Accel Speed' -0.25 2>/dev/null || true
+    fi
+done
